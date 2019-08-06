@@ -54,7 +54,7 @@ public class AuthController {
   }
   @ResponseBody
   @RequestMapping("login")
-    public ResponseResult toLohin(@RequestBody Map<String,Object> map) throws LoadException, LoginException {
+    public ResponseResult toLogin(@RequestBody Map<String,Object> map) throws LoadException, LoginException {
       ResponseResult responseResult=ResponseResult.getResponseResult();
       //获取生成的验证码
       String code = redisTemplate.opsForValue().get(map.get("codekey").toString());
