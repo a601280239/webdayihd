@@ -53,7 +53,7 @@ public class AuthController {
       return responseResult;
   }
   @ResponseBody
-  @RequestMapping("login")
+  @RequestMapping("/login")
     public ResponseResult toLogin(@RequestBody Map<String,Object> map) throws LoadException, LoginException {
       ResponseResult responseResult=ResponseResult.getResponseResult();
       //获取生成的验证码
@@ -89,7 +89,7 @@ public class AuthController {
 
                   //设置token过期 30分钟
                   redisTemplate.expire("USERINFO"+user.getId().toString(),600,TimeUnit.SECONDS);
-                  //设置返回值
+                  //设置返回值user
                   responseResult.setResult(user);
                   responseResult.setCode(200);
                   //设置成功信息
