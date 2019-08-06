@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+         - id: manger-server
+           uri: lb://manger-server
+           predicates:
+           - Path=/api/manger/**
+           #- Method=POST
+           #- Cookie=test, yyyy
+           #- Header=token,(.*) #表示任意的字符
+           filters: #表示去掉api前缀
+             - StripPrefix=2
+#             - name: RequestRateLimiter
+#               args:
+#                    keyResolver: "#{@myAddrReslover}"
+#                    redis-rate-limiter.replenishRate: 1 #单位时间允许内执行请求的个数
+#                    redis-rate-limiter.burstCapacity: 2 #单位时间内允许向桶中放入令牌的数量
+         - id: SSO-SERVER
+           uri: lb://sso-server
+           predicates:
+           - Path=/sso/auth/**
+           - Cookie=authcode, (.*)
+           filters:
+             - StripPrefix=2
+#         - id: SSO-SERVER2
+#           uri: lb://SSO-SERVER
+#           predicates:
+#           - Path=/
+#           filters:
+#             - StripPrefix=0
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "https://localhost:10000"
+#            allowedMethods:
+#            - GET
+#            - POST
