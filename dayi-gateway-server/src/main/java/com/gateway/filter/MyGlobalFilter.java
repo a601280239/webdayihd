@@ -1,9 +1,6 @@
 package com.gateway.filter;
 
-/*import com.alibaba.fastjson.JSONObject;
-import com.zbf.jwt.JWTUtils;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;*/
+
 
 import com.alibaba.fastjson.JSONObject;
 import com.hqf.jwt.JWTUtils;
@@ -38,7 +35,7 @@ public class MyGlobalFilter implements GlobalFilter {
     private String loginpage;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
 
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

@@ -86,7 +86,8 @@ public class AuthController {
                   redisTemplate.opsForValue().set("USERINFO"+user.getId().toString(),token);
                   //将该用户的数据访问权限信息存入缓存中
 
-
+                  //将该用户的数据访问权限信息存入缓存中
+                  redisTemplate.opsForHash().putAll("USERDATAAUTH"+user.getId().toString(),user.getAuthmap());
                   //设置token过期 30分钟
                   redisTemplate.expire("USERINFO"+user.getId().toString(),600,TimeUnit.SECONDS);
                   //设置返回值user
