@@ -11,7 +11,10 @@
 
     <artifactId>dayi-dmanager</artifactId>
 
+
+
     <dependencies>
+
         <!-- 服务治理功能的封装 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -23,8 +26,43 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.46</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- 添加的依赖2019-07-24-->
+
+        <dependency>
+            <groupId>com.huangqingfeng</groupId>
+            <artifactId>dayi-cpojo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.huangqingfeng</groupId>
+            <artifactId>dayi-acommon</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huangqingfeng</groupId>
+            <artifactId>dayi-bsso</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
+
 
     <build>
         <plugins>
@@ -40,12 +78,11 @@
                 </executions>
                 <configuration>
                     <!-- 指定jar的名字 -->
-                    <finalName>manager-server</finalName>
+                    <finalName>sso-server</finalName>
                     <!-- 指定Jar生成后的存储路径 -->
                     <outputDirectory>E:/A-kaifa/A-for-jar</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

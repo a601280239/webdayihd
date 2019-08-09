@@ -74,7 +74,20 @@ public class MyGlobalFilter implements GlobalFilter {
             //获取用户Id
             String userId = jsonObject.get("id").toString();
             //校验用户有没有访问该资源的权限
-            boolean isok=redisTemplate.opsForHash().hasKey("USERDATAAUTH"+userId,currentpath);
+            int i = currentpath.lastIndexOf("/");
+            int j=currentpath.lastIndexOf("?");
+
+            String substring ="";
+
+            if(j<0){
+                substring=currentpath.substring(i);
+            }else{
+                substring=currentpath.substring(i,j);
+            }
+
+
+
+            boolean isok=redisTemplate.opsForHash().hasKey("USERDATAAUTH"+userId,substring);
             //isok=true说明访问资源的权限
             if(isok){
                 ///验证当前路径不是需要进行登录校验的路径，直接放过

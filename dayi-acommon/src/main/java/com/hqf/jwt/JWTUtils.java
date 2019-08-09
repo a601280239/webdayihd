@@ -38,5 +38,8 @@ public class JWTUtils {
         return userinfo;
     }
 
+    public static void main(String[] args) {
+        Integer.parseInt("0");
+    }
 
 }

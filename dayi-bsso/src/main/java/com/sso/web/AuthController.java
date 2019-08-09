@@ -107,4 +107,15 @@ public class AuthController {
           throw new LoginException("用户名或密码错误");
       }
   }
+  @RequestMapping("/loginout")
+  @ResponseBody
+   public ResponseResult  loginout(@RequestBody Map<String,Object> map){
+      ResponseResult responseResult=ResponseResult.getResponseResult();
+      redisTemplate.delete("USERDATAAUTH"+map.get("id").toString());
+      redisTemplate.delete("USERINFO"+map.get("id").toString());
+
+      responseResult.setSuccess("ok");
+      return responseResult;
+  }
+
 }

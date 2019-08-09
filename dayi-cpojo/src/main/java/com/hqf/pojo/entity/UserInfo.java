@@ -37,7 +37,8 @@ public class UserInfo extends BaseAuditable {
 
     @Column(name = "parentId")
     private Long parentId;
-
+    @Column(name = "url")
+    private String url;
     @Transient
     private List<MenuInfo> listMenuInfo;
 
@@ -46,5 +47,6 @@ public class UserInfo extends BaseAuditable {
 
     @Transient
     private Map<String,String> authmap;
-
+    @Transient
+    private String roleName;
 }
