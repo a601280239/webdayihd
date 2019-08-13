@@ -23,6 +23,7 @@ import java.util.Map;
 public class UserService {
     @Autowired
     private UserDao userDao;
+
     @Autowired
     private RoleDao roleDao;
     @Autowired
@@ -33,6 +34,7 @@ public class UserService {
             RoleInfo roleInfo = roleDao.forRoleInfoByUserId(byLoginName.getId());
             byLoginName.setRoleInfo(roleInfo);
             Map<String,String> map =new Hashtable<>();
+            System.out.println(roleInfo.getId());
             List<MenuInfo> forMenuInfo = getForMenuInfo(roleInfo.getId(), 0l, map);
             byLoginName.setListMenuInfo(forMenuInfo);
             byLoginName.setAuthmap(map);

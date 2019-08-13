@@ -5,12 +5,13 @@ import com.hqf.pojo.entity.RoleInfo;
 import com.hqf.pojo.entity.UserInfo;
 import com.hqf.pojo.entity.UserRoleInfo;
 import com.hqf.utils.MD5;
-import com.hqf.utils.UID;
+import com.hqf.utils.TwitterIdWorker;
 import com.manger.dao.RoleInfoDao;
 import com.manger.dao.UserInfoDao;
 import com.manger.dao.UserRoleDao;
 import com.manger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ import java.util.Map;
  **/
 @RestController
 public class UserController {
+
     @Autowired
     UserService userService;
     @Autowired
@@ -54,7 +56,12 @@ public class UserController {
         }
         if(byLoginName.get(0).getUrl()!=null&&!byLoginName.equals("")){
             File file1 =new File("E:/img/"+byLoginName.get(0).getUrl());
-            file1.delete();
+
+
+            if(byLoginName.get(0).getUrl().toString().indexOf("黑")!=0&&byLoginName.get(0).getUrl().toString().indexOf("t")!=0){
+                file1.delete();
+            }
+
         }
         File file =new File("E:/img/"+id+"/");
         if(!file.exists()){
@@ -82,7 +89,9 @@ public class UserController {
             responseResult.setCode(500);
             return responseResult;
         }
-        long next = UID.next();
+
+        TwitterIdWorker twitterIdWorker=new TwitterIdWorker();
+        long next = twitterIdWorker.nextId();
         File file =new File("E:/img/"+next+"/");
         if(!file.exists()){
             file.mkdirs();
@@ -91,6 +100,7 @@ public class UserController {
 
         UserInfo userInfo=new UserInfo();
         userInfo.setUserName(userName);
+
         userInfo.setId(next);
         userInfo.setLoginName(loginName);
         userInfo.setSex(sex);
@@ -108,11 +118,17 @@ public class UserController {
         userInfo.setPassword(MD5.encryptPassword(userInfo.getPassword(), "hqf"));
         ResponseResult responseResult = ResponseResult.getResponseResult();
         List<UserInfo> byLoginName = userInfoDao.findByLoginName(userInfo.getLoginName());
-        if (byLoginName.size() > 0) {
+        if (byLoginName!=null&&byLoginName.size() > 0) {
             responseResult.setCode(500);
             return responseResult;
         }
-        userInfo.setId(UID.next());
+        if(userInfo.getSex()==1){
+            userInfo.setUrl("黑色.jpg");
+        }else{
+            userInfo.setUrl("timg.jpg");
+        }
+        TwitterIdWorker twitterIdWorker=new TwitterIdWorker();
+        userInfo.setId(twitterIdWorker.nextId());
         userInfoDao.save(userInfo);
         responseResult.setCode(200);
         return responseResult;
@@ -124,14 +140,19 @@ public class UserController {
         List<UserInfo> byLoginName = userInfoDao.findByLoginName(userInfo.getLoginName());
 
 
-        if(byLoginName.size()>0&&!userInfo.getId().toString().equals(byLoginName.get(0).getId().toString())){
+        if(byLoginName!=null&&byLoginName.size()>0&&!userInfo.getId().toString().equals(byLoginName.get(0).getId().toString())){
 
                 responseResult.setCode(500);
                 return responseResult;
 
 
         }
+        if(userInfo.getSex()==1){
+            userInfo.setUrl("黑色.jpg");
 
+        }else{
+            userInfo.setUrl("timg.jpg");
+        }
         userInfoDao.save(userInfo);
         responseResult.setCode(200);
         return responseResult;
@@ -146,18 +167,22 @@ public class UserController {
     @Autowired
     private UserRoleDao userRoleDao;
     @RequestMapping("/addUr")
+    @Transactional
     public ResponseResult addUr(@RequestBody Map<String,Object> map){
         ResponseResult responseResult = ResponseResult.getResponseResult();
         List<UserRoleInfo> userId = userRoleDao.findByUserId(Long.parseLong(map.get("userId").toString()));
         System.out.println(map);
         if(userId!=null&&userId.size()>0){
-            userRoleDao.delByUserId(Long.parseLong(map.get("userId").toString()));
+            userRoleDao.deleteByUserId(Long.parseLong(map.get("userId").toString()));
         }
         UserRoleInfo userRoleInfo=new UserRoleInfo();
-        userRoleInfo.setId(UID.next());
+        TwitterIdWorker twitterIdWorker=new TwitterIdWorker();
+        long id = twitterIdWorker.nextId();
+        userRoleInfo.setId(id);
         userRoleInfo.setUserId(Long.parseLong(map.get("userId").toString()));
         userRoleInfo.setRoleId(Long.parseLong(map.get("roleId").toString()));
         userRoleDao.save(userRoleInfo);
+
         responseResult.setCode(200);
         return responseResult;
     }

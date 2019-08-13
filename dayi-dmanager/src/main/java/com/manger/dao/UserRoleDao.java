@@ -14,9 +14,13 @@ import java.util.List;
  * @Date 2019/8/8
  **/
 public interface UserRoleDao extends JpaRepository<UserRoleInfo,Long> {
-    @Query(value = "delete from base_user_role where userId=?1",nativeQuery = true)
-    @Modifying
-    public int delByUserId(Long id);
+
+    public void deleteByUserId(Long id);
     public List<UserRoleInfo> findByUserId(Long userid);
+    public List<UserRoleInfo> findByRoleId(Long roleId);
+    @Query(value = "delete from base_user_role where roleId=?1",nativeQuery = true)
+    @Modifying
+    public int delByRoleID(Long id);
+
 
 }

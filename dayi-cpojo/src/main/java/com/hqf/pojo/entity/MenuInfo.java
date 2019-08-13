@@ -1,5 +1,7 @@
 package com.hqf.pojo.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.hqf.pojo.base.BaseAuditable;
 import lombok.Data;
 
@@ -21,7 +23,7 @@ public class MenuInfo extends BaseAuditable {
 
     @Column(name = "menuName")
     private String menuName;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "parentId")
     private Long parentId;
 
@@ -30,7 +32,8 @@ public class MenuInfo extends BaseAuditable {
 
     @Column(name = "url")
     private String url;
-
+    @Transient
+    private Long []ids;
     @Transient
     private List<MenuInfo> menuInfoList;
 

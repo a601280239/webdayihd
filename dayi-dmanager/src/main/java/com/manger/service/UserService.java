@@ -34,9 +34,10 @@ public class UserService {
     @Autowired
     LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean;
     public Object testQuery(String name,String dt1,String dt2,Integer sex,Integer page,Integer pageSize){
-        EntityManager entityManager = localContainerEntityManagerFactoryBean.getNativeEntityManagerFactory().createEntityManager();
-
+                EntityManager entityManager = localContainerEntityManagerFactoryBean.getNativeEntityManagerFactory().createEntityManager();
+        entityManager.clear();
         StringBuffer stringBuffer = new StringBuffer("select * from base_user where 1=1");
+
 
         StringBuffer stringBufferCount=new StringBuffer("select count(bu.id) as totalCount from base_user bu where 1=1");
 
@@ -71,7 +72,7 @@ public class UserService {
 
 
         List<UserInfo> resultList = nativeQuery.getResultList();
-        if(resultList!=null){
+        if(resultList!=null&&resultList.size()>0){
             for (UserInfo userInfo : resultList) {
                 RoleInfo roleInfo = roleInfoDao.forRoleInfoByUserId(userInfo.getId());
                if(roleInfo!=null){
@@ -101,14 +102,17 @@ public class UserService {
             String url = userInfo.getUrl();
 
 
-            userRoleDao.delByUserId(id);
+            userRoleDao.deleteByUserId(id);
             System.out.println("id = [" + id + "]");
 
             userInfoDao.delete(userInfo);
 
             if(url!=null&&!url.equals("")){
                 File file= new File("E:/img/"+url);
-                file.delete();
+                if(url.indexOf("黑")!=0&&url.indexOf("t")!=0){
+                    file.delete();
+                }
+
             }
 
             map.put("code",200);

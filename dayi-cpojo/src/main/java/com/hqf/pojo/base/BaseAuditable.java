@@ -1,5 +1,7 @@
 package com.hqf.pojo.base;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,7 +22,7 @@ import java.util.Date;
 public abstract class BaseAuditable {
     @Column(name = "id")
     @Id
-    /*@GeneratedValue(strategy = GenerationType.IDENTITY)*/
+    @JsonSerialize(using = ToStringSerializer.class)
     Long id;
     @LastModifiedDate
     @Column(name="updateTime")
@@ -29,8 +31,9 @@ public abstract class BaseAuditable {
     @CreatedDate
     @Column(name="createTime")
     Date createTime;
-
     @Version
     @Column(name = "version")
     private Long version;
+
+
 }
