@@ -12,4 +12,6 @@ public interface MenuInfoDao extends JpaRepository<MenuInfo,Long> {
     public List<MenuInfo>  findByParentId(Long mid);
     @Query(value = "select bm.* from base_role_menu brm INNER JOIN base_menu bm on brm.menuId=bm.id where brm.roleId=?1" ,nativeQuery = true)
     public List<MenuInfo> getRoleMenuInfo(Long roleId);
+
+
 }

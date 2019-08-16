@@ -66,6 +66,7 @@ public class RoleController {
                roleInfo.setUserInfos(userInfos);
                roleInfo.setMenuInfoList(menuInfoDao.getRoleMenuInfo(roleInfo.getId()));
 
+
             }
         }
 
@@ -83,6 +84,7 @@ public class RoleController {
 
         return  map1;
     }
+
 
     @RequestMapping("/delRole")
     @Transactional
@@ -144,29 +146,39 @@ public class RoleController {
     @Transactional
     public ResponseResult addRm(@RequestBody RoleInfo roleInfo){
         ResponseResult responseResult=new ResponseResult();
+        roleInfoDao.save(roleInfo);
+        Long urid = roleInfo.getUrid();
+        List<MenuInfo> roleMenuInfo = menuInfoDao.getRoleMenuInfo(urid);
+        Long ids1[] = new Long[roleMenuInfo.size()];
 
-        try {
-            roleInfoDao.save(roleInfo);
-            String sql1="delete from base_role_menu where roleId=?";
-          jdbcTemplate.update(sql1,roleInfo.getId());
+        List<MenuInfo> roleMenuInfo1 = menuInfoDao.getRoleMenuInfo(roleInfo.getId());
 
-            String[] ids = roleInfo.getIds();
-            if(ids!=null&&!ids.equals("")) {
-                String sql="insert into base_role_menu(id,roleId,menuId) values(?,?,?)";
-                List<Object[]>list=new ArrayList<>();
-                TwitterIdWorker twitterIdWorker = new TwitterIdWorker();
-                for (String s : ids) {
+       if(roleMenuInfo1!=null&&roleMenuInfo1.size()>roleMenuInfo.size()){
+    roleMenuInfo1.retainAll(roleMenuInfo);
 
-                    list.add(new Object[]{twitterIdWorker.nextId(),roleInfo.getId(),Long.parseLong(s)});
-                }
-                jdbcTemplate.batchUpdate(sql,list);
+           for (MenuInfo menuInfo : roleMenuInfo1) {
+               String sql1="delete from base_role_menu where roleId=? and menuId=?";
+               jdbcTemplate.update(sql1,new Object[]{roleInfo.getId(),menuInfo.getId()});
+               
+           }
+       }else{
+               String sql1="delete from base_role_menu where roleId=?";
+               jdbcTemplate.update(sql1,roleInfo.getId());
+       }
+        String[] ids = roleInfo.getIds();
+        if(ids!=null&&!ids.equals("")) {
+            String sql="insert into base_role_menu(id,roleId,menuId) values(?,?,?)";
+            List<Object[]>list=new ArrayList<>();
+            TwitterIdWorker twitterIdWorker = new TwitterIdWorker();
+            for (String s : ids) {
+
+                list.add(new Object[]{twitterIdWorker.nextId(),roleInfo.getId(),Long.parseLong(s)});
             }
-
-            responseResult.setCode(200);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            responseResult.setCode(500);
+            jdbcTemplate.batchUpdate(sql,list);
         }
+
+        responseResult.setCode(200);
+
 
         return responseResult;
     }

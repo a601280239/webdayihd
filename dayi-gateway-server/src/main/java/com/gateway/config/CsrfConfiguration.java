@@ -25,7 +25,7 @@ public class CsrfConfiguration {
     private static final String ALLOWED_HEADERS = "x-requested-with,Content-Type,Authorization,credential,token";
     private static final String ALLOWED_METHODS = "*";
     //表示允许跨域的源
-    private static final String ALLOWED_ORIGIN = "http://localhost:8080";
+    private static final String ALLOWED_ORIGIN = "https://localhost:8080";
     private static final String ALLOWED_Expose = "*";
     private static final String MAX_AGE = "18000L";
 

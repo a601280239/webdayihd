@@ -17,6 +17,7 @@ public interface UserInfoDao extends JpaRepository<UserInfo,Long>{
     public List<UserInfo> findByLoginName(String loginName);
     @Query(value = "select bu.* from base_user_role bur inner  join base_user bu on bur.userId=bu.id where bur.roleId=?1",nativeQuery = true)
     public List<UserInfo> forUserInfoByUserId(Long roleId);
+    public List<UserInfo> findByTel(String tel);
 
 
 }

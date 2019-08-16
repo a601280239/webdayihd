@@ -11,7 +11,9 @@ import com.hqf.utils.UID;
 import com.sso.service.UserService;
 import javafx.fxml.LoadException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -81,11 +84,21 @@ public class AuthController {
 
                   //将加密信息存入statuInfo
                   responseResult.setToken(token);
-
+                  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+                  Date date = new Date();
+                  String format = simpleDateFormat.format(date);
                   //将生成的token存储到redis库
+                    redisTemplate.opsForHash().increment("number",format,1);
+                  Calendar calendar = Calendar.getInstance();
+                  calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) - 7);
+                  Date today = calendar.getTime();
+                  String format1 = simpleDateFormat.format(today);
+                  redisTemplate.opsForHash().delete("number",format1);
+
+
                   redisTemplate.opsForValue().set("USERINFO"+user.getId().toString(),token);
                   //将该用户的数据访问权限信息存入缓存中
-
+                redisTemplate.delete("USERDATAAUTH"+user.getId().toString());
                   //将该用户的数据访问权限信息存入缓存中
                   redisTemplate.opsForHash().putAll("USERDATAAUTH"+user.getId().toString(),user.getAuthmap());
                   //设置token过期 30分钟
@@ -117,5 +130,22 @@ public class AuthController {
       responseResult.setSuccess("ok");
       return responseResult;
   }
+  @RequestMapping("loginCount")
+  @ResponseBody
+    public Object loginCount(){
+      Map<String, List> map =new HashMap<>();
+      Cursor<Map.Entry<Object, Object>> number = redisTemplate.opsForHash().scan("number", ScanOptions.NONE);
+      List<String> key1=new ArrayList<>();
+      List<String> value1=new ArrayList<>();
+      while(number.hasNext()){
+          Map.Entry<Object, Object> entry = number.next();
+          key1.add(entry.getKey().toString());
+          value1.add(entry.getValue().toString());
+      }
+      map.put("key1",key1);
+      map.put("value1",value1);
+      return map;
+    }
+
 
 }

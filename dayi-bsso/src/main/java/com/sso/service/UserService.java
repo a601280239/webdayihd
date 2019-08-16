@@ -34,10 +34,11 @@ public class UserService {
             RoleInfo roleInfo = roleDao.forRoleInfoByUserId(byLoginName.getId());
             byLoginName.setRoleInfo(roleInfo);
             Map<String,String> map =new Hashtable<>();
-            System.out.println(roleInfo.getId());
             List<MenuInfo> forMenuInfo = getForMenuInfo(roleInfo.getId(), 0l, map);
             byLoginName.setListMenuInfo(forMenuInfo);
             byLoginName.setAuthmap(map);
+            List<MenuInfo> roleMenuInfo = menuDao.getRoleMenuInfo(roleInfo.getId());
+
         }
         return byLoginName;
     }
@@ -49,6 +50,7 @@ public class UserService {
                     map.put(menuInfo.getUrl(),"");
                 }
                 menuInfo.setMenuInfoList(getForMenuInfo(roleId,menuInfo.getId(),map));
+
             }
         }
         return  firstMenuInfo;

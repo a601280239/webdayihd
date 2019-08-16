@@ -42,6 +42,7 @@ public class UserInfo extends BaseAuditable {
     @Transient
     private List<MenuInfo> listMenuInfo;
 
+
     @Transient
     private RoleInfo roleInfo;
 

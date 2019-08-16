@@ -36,5 +36,9 @@ public class MenuInfo extends BaseAuditable {
     private Long []ids;
     @Transient
     private List<MenuInfo> menuInfoList;
+    @Transient
+    private Long urid;
+    @Transient
+    private int uleval;
 
 }

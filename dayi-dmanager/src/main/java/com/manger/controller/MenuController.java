@@ -5,6 +5,7 @@ import com.hqf.pojo.entity.MenuInfo;
 import com.hqf.utils.TwitterIdWorker;
 import com.manger.dao.MenuInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,8 @@ import java.util.List;
 public class MenuController {
     @Autowired
     private MenuInfoDao menuInfoDao;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
     @RequestMapping("/findAllMenu")
     public List<MenuInfo> findMenu(){
         return getForMenuInfo(0l);
@@ -39,11 +42,16 @@ public class MenuController {
     }
     @RequestMapping("/addMenu")
     public ResponseResult addMenu(@RequestBody MenuInfo menuInfo){
+
         ResponseResult responseResult=ResponseResult.getResponseResult();
         TwitterIdWorker twitterIdWorker=new TwitterIdWorker();
-        long id = twitterIdWorker.nextId();
-        menuInfo.setId(id);
+
+        menuInfo.setId(twitterIdWorker.nextId());
         menuInfoDao.save(menuInfo);
+        if(menuInfo.getUleval()==1){
+            String sql="insert into base_role_menu(id,roleId,menuId) values(?,?,?)";
+            jdbcTemplate.update(sql,new Object[]{twitterIdWorker.nextId(),menuInfo.getUrid(),menuInfo.getId()});
+        }
         menuInfoDao.flush();
         responseResult.setCode(200);
         return responseResult;

@@ -61,7 +61,7 @@ public class MyGlobalFilter implements GlobalFilter {
                 //如果不报错说明没有失效,重新加密登录信息
                 String token = JWTUtils.generateToken(jsonObject.toJSONString());
                 //存储到响应头中
-                response.getHeaders().set("token",token);
+               // response.getHeaders().set("token",token);
             }catch (JwtException e){
                 e.printStackTrace();
                 //表示超时需要重新登录（这种情况一般发生在长时间不登录的情况下使用的旧的Token）
@@ -80,9 +80,9 @@ public class MyGlobalFilter implements GlobalFilter {
             String substring ="";
 
             if(j<0){
-                substring=currentpath.substring(i);
+                substring=currentpath.substring(i+1);
             }else{
-                substring=currentpath.substring(i,j);
+                substring=currentpath.substring(i+1,j);
             }
 
 
