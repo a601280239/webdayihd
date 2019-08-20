@@ -37,7 +37,7 @@ public class UserService {
             List<MenuInfo> forMenuInfo = getForMenuInfo(roleInfo.getId(), 0l, map);
             byLoginName.setListMenuInfo(forMenuInfo);
             byLoginName.setAuthmap(map);
-            List<MenuInfo> roleMenuInfo = menuDao.getRoleMenuInfo(roleInfo.getId());
+
 
         }
         return byLoginName;
@@ -55,5 +55,18 @@ public class UserService {
         }
         return  firstMenuInfo;
     }
+    public UserInfo getUserTel(String tel){
+        UserInfo byLoginName = userDao.findByTel(tel);
+        if(byLoginName!=null){
+            RoleInfo roleInfo = roleDao.forRoleInfoByUserId(byLoginName.getId());
+            byLoginName.setRoleInfo(roleInfo);
+            Map<String,String> map =new Hashtable<>();
+            List<MenuInfo> forMenuInfo = getForMenuInfo(roleInfo.getId(), 0l, map);
+            byLoginName.setListMenuInfo(forMenuInfo);
+            byLoginName.setAuthmap(map);
+            List<MenuInfo> roleMenuInfo = menuDao.getRoleMenuInfo(roleInfo.getId());
 
+        }
+        return byLoginName;
+    }
 }

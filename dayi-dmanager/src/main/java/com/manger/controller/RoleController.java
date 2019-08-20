@@ -4,6 +4,8 @@ import com.hqf.pojo.ResponseResult;
 import com.hqf.pojo.entity.*;
 import com.hqf.utils.TwitterIdWorker;
 import com.manger.dao.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -26,6 +28,7 @@ import java.util.Map;
  * @Date 2019/8/9
  **/
 @RestController
+@Api(value = "角色相关业务",tags = "角色操作相关")
 public class RoleController {
     @Autowired
     private LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean;
@@ -39,6 +42,7 @@ public class RoleController {
     private RoleInfoDao roleInfoDao;
     @Autowired
     private MenuInfoDao menuInfoDao;
+    @ApiOperation(value = "查询角色列表", notes = "分页模糊查询角色列表")
     @RequestMapping("selectRole")
     public Object selectRole(@RequestBody Map<String,Object> map){
 
@@ -85,6 +89,7 @@ public class RoleController {
         return  map1;
     }
 
+    @ApiOperation(value = "删除角色", notes = "删除")
 
     @RequestMapping("/delRole")
     @Transactional
@@ -108,9 +113,10 @@ public class RoleController {
         return responseResult;
     }
 
+    @ApiOperation(value = "添加角色", notes = "比登录用户的角色低一级")
+
     @RequestMapping("/addRole")
     public ResponseResult addRole(@RequestBody RoleInfo roleInfo) {
-
         ResponseResult responseResult = ResponseResult.getResponseResult();
         List<RoleInfo> byRoleName = roleInfoDao.findByRoleName(roleInfo.getRoleName());
         if (byRoleName!=null&&byRoleName.size() > 0) {
@@ -123,6 +129,7 @@ public class RoleController {
         roleInfoDao.save(roleInfo);
         return responseResult;
     }
+    @ApiOperation(value = "查询权限", notes = "递归查询权限")
     @RequestMapping("/findMenu")
     public List<MenuInfo> findMenu(){
         return getForMenuInfo(0l);
@@ -141,7 +148,7 @@ public class RoleController {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
-
+    @ApiOperation(value = "绑定权限", notes = "绑定权限")
     @RequestMapping("/addRm")
     @Transactional
     public ResponseResult addRm(@RequestBody RoleInfo roleInfo){
@@ -154,7 +161,7 @@ public class RoleController {
         List<MenuInfo> roleMenuInfo1 = menuInfoDao.getRoleMenuInfo(roleInfo.getId());
 
        if(roleMenuInfo1!=null&&roleMenuInfo1.size()>roleMenuInfo.size()){
-    roleMenuInfo1.retainAll(roleMenuInfo);
+                roleMenuInfo1.retainAll(roleMenuInfo);
 
            for (MenuInfo menuInfo : roleMenuInfo1) {
                String sql1="delete from base_role_menu where roleId=? and menuId=?";

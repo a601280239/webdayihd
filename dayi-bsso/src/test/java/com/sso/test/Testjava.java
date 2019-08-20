@@ -4,14 +4,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @ClassName Testjava
@@ -26,16 +22,13 @@ public class Testjava {
     private RedisTemplate<String,String> redisTemplate;
     @Test
     public void test01(){
-        Cursor<Map.Entry<Object, Object>> number = redisTemplate.opsForHash().scan("number", ScanOptions.NONE);
-        List<String> key1=new ArrayList<>();
-        List<String> value1=new ArrayList<>();
-        while(number.hasNext()){
-            Map.Entry<Object, Object> entry = number.next();
-                    key1.add(entry.getKey().toString());
-                    value1.add(entry.getValue().toString());
+
+        Set<Object> number = redisTemplate.opsForHash().keys("number");
+        for (Object o : number) {
+            redisTemplate.opsForHash().delete("number",o.toString());
+        break;
         }
-        System.out.println(key1);
-        System.out.println(value1);
+
 
 
     }

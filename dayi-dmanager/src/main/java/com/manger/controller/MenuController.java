@@ -4,6 +4,8 @@ import com.hqf.pojo.ResponseResult;
 import com.hqf.pojo.entity.MenuInfo;
 import com.hqf.utils.TwitterIdWorker;
 import com.manger.dao.MenuInfoDao;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +23,13 @@ import java.util.List;
  * @Date 2019/8/10
  **/
 @RestController
+@Api(value = "权限操作相关",tags = "权限操作相关")
 public class MenuController {
     @Autowired
     private MenuInfoDao menuInfoDao;
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @ApiOperation(value = "查询权限", notes = "递归查询权限")
     @RequestMapping("/findAllMenu")
     public List<MenuInfo> findMenu(){
         return getForMenuInfo(0l);
@@ -40,6 +44,8 @@ public class MenuController {
         }
         return firstMenuInfo;
     }
+    @ApiOperation(value = "添加权限", notes = "添加权限，赋给一级角色")
+
     @RequestMapping("/addMenu")
     public ResponseResult addMenu(@RequestBody MenuInfo menuInfo){
 
@@ -56,6 +62,8 @@ public class MenuController {
         responseResult.setCode(200);
         return responseResult;
     }
+    @ApiOperation(value = "修改权限名称", notes = "修改权限名称")
+
     @RequestMapping("/updateMenu")
     public ResponseResult updateMenu(@RequestBody MenuInfo menuInfo){
         ResponseResult responseResult=ResponseResult.getResponseResult();
@@ -64,6 +72,7 @@ public class MenuController {
         responseResult.setCode(200);
         return responseResult;
     }
+    @ApiOperation(value = "删除权限", notes = "删除权限，并删除该权限相关一切数据")
     @Transactional
     @RequestMapping("/delMenu")
     public ResponseResult delMenu(@RequestBody MenuInfo menuInfo){

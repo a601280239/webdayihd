@@ -1,8 +1,10 @@
 package com.manger.service;
 
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.hqf.pojo.entity.MenuInfo;
 import com.hqf.pojo.entity.RoleInfo;
 import com.hqf.pojo.entity.UserInfo;
+import com.manger.dao.MenuInfoDao;
 import com.manger.dao.RoleInfoDao;
 import com.manger.dao.UserInfoDao;
 import com.manger.dao.UserRoleDao;
@@ -10,11 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,8 @@ public class UserService {
     LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean;
     @Autowired
     private FastFileStorageClient storageClient;
+    @Autowired
+    private MenuInfoDao menuInfoDao;
     @Value("${deleteUrl}")
     private String deleteUrl;
     public Object testQuery(String name,String dt1,String dt2,Integer sex,Integer page,Integer pageSize){
@@ -99,7 +104,7 @@ public class UserService {
         return  map;
 
     }
-    @Transactional
+   @Transactional
     public Object deleteById(Long id){
         Map<String,Object> map =new HashMap<String, Object>();
 
@@ -170,5 +175,33 @@ public class UserService {
 
         return  nativeQuery.getResultList();
 
+    }
+    @Transactional
+    public UserInfo getUserByLogin(String loginName){
+        UserInfo byLoginName =userInfoDao.getByLoginName(loginName);
+        if(byLoginName!=null){
+            RoleInfo roleInfo = roleInfoDao.forRoleInfoByUserId(byLoginName.getId());
+            byLoginName.setRoleInfo(roleInfo);
+            Map<String,String> map =new Hashtable<>();
+            List<MenuInfo> forMenuInfo = getForMenu(roleInfo.getId(),0l, map);
+            byLoginName.setListMenuInfo(forMenuInfo);
+            byLoginName.setAuthmap(map);
+
+
+        }
+        return byLoginName;
+    }
+    public List<MenuInfo> getForMenu(Long roleId, Long mid, Map<String,String> map){
+        List<MenuInfo> firstMenuInfo = menuInfoDao.getFirstMenuInfo(roleId, mid);
+        if(firstMenuInfo!=null){
+            for (MenuInfo menuInfo : firstMenuInfo) {
+                if(menuInfo.getLeval()==4){
+                    map.put(menuInfo.getUrl(),"");
+                }
+                menuInfo.setMenuInfoList(getForMenu(roleId,menuInfo.getId(),map));
+
+            }
+        }
+        return  firstMenuInfo;
     }
 }
