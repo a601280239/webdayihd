@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Set;
-
 /**
  * @ClassName Testjava
  * @Description: TODO
@@ -22,12 +20,6 @@ public class Testjava {
     private RedisTemplate<String,String> redisTemplate;
     @Test
     public void test01(){
-
-        Set<Object> number = redisTemplate.opsForHash().keys("number");
-        for (Object o : number) {
-            redisTemplate.opsForHash().delete("number",o.toString());
-        break;
-        }
 
 
 
